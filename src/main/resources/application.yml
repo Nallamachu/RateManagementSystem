@@ -1,0 +1,53 @@
+server:
+  port: 9099
+  ssl:
+    enabled: true
+    key-alias: spring
+    key-store: classpath:saml/keystore.jks
+    key-store-password: secret
+spring:
+  application:
+    name: RATE-MANAGEMENT-SERVICE
+  datasource:
+    url: jdbc:h2:~/rms
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+    format_sql: true
+    hibernate:
+      ddl_auto: create-drop
+    properties:
+      hibernate:
+        current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
+  h2:
+    console:
+      enabled: true
+  main:
+    allow-bean-definition-overriding: true
+management:
+  endpoints:
+    shutdown:
+      enabled: true
+    web:
+      base-path: /
+security:
+  saml2:
+    metadata-url: https://dev-09263910.okta.com/app/exk4u0o0bIvXHaDp85d6/sso/saml/metadata
+#user:
+#  oauth:
+#    clientId: exk4u0o0bIvXHaDp85d6
+#    clientSecret: rTFZ0M8JvRTCVcdByMCLmWjFwtIUDvYW86eGBSkT
+#    redirectUris: /authorization-code/callback
+#    issuer: https://dev-09263910.okta.com/oauth2/default
+#    user: admin
+#    password: password
+
+#okta:
+#  oauth2:
+#    client-id: 0oa4sxo8zkE628CYp5d6
+#    client-secret: rTFZ0M8JvRTCVcdByMCLmWjFwtIUDvYW86eGBSkT
+#    issuer: https://dev-09263910.okta.com/oauth2/default
+#    redirect-uri: /authorization-code/callback
