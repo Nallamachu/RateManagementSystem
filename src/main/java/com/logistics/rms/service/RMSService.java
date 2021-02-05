@@ -5,6 +5,7 @@ import com.logistics.rms.dto.SurCharge;
 import com.logistics.rms.entity.RateManagement;
 import com.logistics.rms.mapper.RateMapper;
 import com.logistics.rms.repository.RMSRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class RMSService {
 
     @Autowired
@@ -26,6 +28,7 @@ public class RMSService {
     private RateMapper rateMapper;
 
     public RateManagement getRateManagementById(Long id){
+        log.info("Calling getRateManagementById method with id ::::: "+id);
         RateManagement rateManagement = null;
         Optional<RateManagement> optional = rmsRepository.findById(id);
         if(optional.isPresent())
@@ -34,6 +37,7 @@ public class RMSService {
         if(rateManagement!=null && surCharge !=null
                 && surCharge.getSurchargeDescription().toUpperCase().equals("VAT")){
             //TODO - NOT SURE ABOUT THE FORMULA TO APPLY ON SURCHARGE AMOUNT
+            log.info("applying surchage value on existing Rate::: "+surCharge.getSurchargeRate());
             Integer amount = rateManagement.getAmount()+surCharge.getSurchargeRate();
             rateManagement.setAmount(amount);
         }
@@ -41,12 +45,14 @@ public class RMSService {
     }
 
     public RateDTO saveRateManagement(RateDTO rateDTO) throws Exception{
+        log.info("calling saveRateManagement method with Rate  ::: "+rateDTO.toString());
         RateManagement rateManagement = rateMapper.getRateManagement(rateDTO);
         rateManagement = rmsRepository.save(rateManagement);
         return rateMapper.getRateDTO(rateManagement);
     }
 
     public RateDTO updateRateManagement(Long id, RateDTO rateDTO){
+        log.info("calling updateRateManagement method with Rate  ::: "+rateDTO.toString());
         RateManagement rateManagementFromDB = getRateManagementById(id);
         transformData(rateManagementFromDB, rateDTO);
         rateManagementFromDB = rmsRepository.save(rateManagementFromDB);
@@ -54,12 +60,14 @@ public class RMSService {
     }
 
     public void deleteRateManagement(Long id){
+        log.info("calling deleteRateManagement method with id  ::: "+id);
         RateManagement rateManagement = getRateManagementById(id);
         if(rateManagement!=null)
             rmsRepository.delete(rateManagement);
     }
 
     private void transformData(RateManagement rateManagementFromDB, RateDTO rateDTO) {
+        log.info("calling transformData method ::: ");
         if(rateManagementFromDB !=null & rateDTO != null){
             rateManagementFromDB.setEffectiveDate(rateMapper.asLocalDateTime(rateDTO.getEffectiveDate()));
             rateManagementFromDB.setDescription(rateDTO.getDescription());
@@ -69,6 +77,7 @@ public class RMSService {
     }
 
     private SurCharge getSurcharge(){
+        log.info("calling getSurcharge method ::: ");
         Map<String,String> variables = new HashMap<>();
         variables.put("content-type","application/json");
         restTemplate.setDefaultUriVariables(variables);

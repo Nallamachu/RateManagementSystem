@@ -1,5 +1,6 @@
 package com.logistics.rms.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -12,6 +13,7 @@ import static org.springframework.security.extensions.saml2.config.SAMLConfigure
 @EnableWebSecurity
 @Configuration
 @EnableGlobalMethodSecurity(securedEnabled = true)
+@Slf4j
 public class BasicSecurity extends WebSecurityConfigurerAdapter {
     @Value("${security.saml2.metadata-url}")
     String metadataUrl;
@@ -30,6 +32,7 @@ public class BasicSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
+        log.info("Calling configure method with header ::: "+http);
         http
                 .authorizeRequests()
                 .antMatchers("/*").permitAll()
